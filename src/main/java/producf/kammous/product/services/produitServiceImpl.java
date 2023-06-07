@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import producf.kammous.product.DTOs.ProduitDTO;
 import producf.kammous.product.entities.Categorie;
 import producf.kammous.product.entities.Produit;
+import producf.kammous.product.exception.IllegalArgumentException;
+import producf.kammous.product.exception.ProductNotFoundException;
 import producf.kammous.product.mapper.productMapperImpl;
 import producf.kammous.product.repositories.produitRepository;
 
@@ -33,32 +35,36 @@ public class produitServiceImpl implements productService{
     }
 
     @Override
-    public ProduitDTO getProduitById(Long id) {
-        Produit produit = produitRepository.findById(id).orElseThrow();
-        return dtoMapper.fromProduit(produit);
+    public Produit getProduitById(Long id) throws ProductNotFoundException, IllegalArgumentException {
+        if(id<=0 || !String.valueOf(id).matches("\\d+")){
+            throw new IllegalArgumentException("Ivalid product Id"+id);
+        }
+        Produit produit = produitRepository.findById(id)
+                .orElseThrow(()->new ProductNotFoundException("Product not found with Id : "+id));
+        return produit;
     }
 
     @Override
     public Produit ajouterProduit(Produit produit) {
         produit.setCreatedAt(new Date());
         Produit produits = produitRepository.save(produit);
-        kafkaTemplate.send("produit", produits);
+        kafkaTemplate.send("save-produit", produits);
         return produits;
     }
     @Override
     public Produit modifierProduit(Produit produit) {
         produit.setUpdatedAt(new Date());
         Produit produits = produitRepository.save(produit);
-        kafkaTemplate.send("produit",produits);
+        kafkaTemplate.send("update-produit",produits);
         return produits;
     }
 
     @Override
-    public Produit modifierLigne(ProduitDTO produitDTO) {
+    public Produit HideProduit(ProduitDTO produitDTO) {
         Produit produit = produitRepository.findById(produitDTO.getId()).orElseThrow();
         produit.setSupprimer(true);
         produitRepository.save(produit);
-        kafkaTemplate.send("produit",produit);
+        kafkaTemplate.send("hide-produit",produit);
         return produit;
     }
 

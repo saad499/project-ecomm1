@@ -10,6 +10,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import producf.kammous.product.DTOs.CategorieDTO;
 import producf.kammous.product.entities.Categorie;
+import producf.kammous.product.exception.CategorieNotFoundException;
+import producf.kammous.product.exception.IllegalArgumentException;
 import producf.kammous.product.mapper.productMapperImpl;
 import producf.kammous.product.repositories.*;
 
@@ -33,8 +35,14 @@ public class categorieServiceImpl implements categorieService{
 
 
     @Override
-    public Categorie getCategorieById(Long id) {
-        Categorie categorie = categorieRepository.findById(id).orElseThrow();
+    public Categorie getCategorieById(Long id) throws CategorieNotFoundException, IllegalArgumentException {
+        if(id<=0 || !String.valueOf(id).matches("\\d+")){
+            throw new IllegalArgumentException("Ivalid categorie Id"+id);
+        }
+
+        Categorie categorie = categorieRepository.findById(id)
+                .orElseThrow(()->new CategorieNotFoundException("Categorie Not found with id : "+id));
+
         return categorie;
     }
 
@@ -43,7 +51,7 @@ public class categorieServiceImpl implements categorieService{
        // Categorie categorie = dtoMapper.fromCategorieDTO(categorie);
         categorie.setCreatedAt(new Date());
         Categorie saveCategorie = categorieRepository.save(categorie);
-        kafkaTemplate.send("categorie",saveCategorie);
+        kafkaTemplate.send("save-categorie",saveCategorie);
         return saveCategorie;
     }
 
@@ -51,16 +59,16 @@ public class categorieServiceImpl implements categorieService{
     public Categorie modifierCategorie(Categorie categorie) {
         categorie.setUpdatedAt(new Date());
         Categorie categories = categorieRepository.save(categorie);
-        kafkaTemplate.send("categorie",categories);
+        kafkaTemplate.send("update-categorie",categories);
         return categories;
     }
 
     @Override
-    public Categorie modifierLigne(CategorieDTO categorieDTO) {
+    public Categorie HideLigneCategorie(CategorieDTO categorieDTO) {
         Categorie categorie = categorieRepository.findById(categorieDTO.getId()).orElseThrow();
         categorie.setSupprimer(true);
         categorieRepository.save(categorie);
-        kafkaTemplate.send("categorie",categorie);
+        kafkaTemplate.send("hide-categorie",categorie);
         return categorie;
     }
     @Override
