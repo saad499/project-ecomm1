@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,6 +29,7 @@ public class CategorieRestController {
 
 
     @GetMapping("/categorie")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<CategorieDTO>> categories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
@@ -37,6 +39,7 @@ public class CategorieRestController {
     }
 
     @GetMapping("/categorieNotSup")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Categorie>> categorieNotDelete(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
@@ -46,6 +49,7 @@ public class CategorieRestController {
     }
 
     @GetMapping("/categories")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Categorie>> chercherCategorie(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
@@ -55,6 +59,7 @@ public class CategorieRestController {
     }
 
     @GetMapping("/categorie/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Categorie getCategorieById(@PathVariable(name="id") String id) throws CategorieNotFoundException, IllegalArgumentException {
         try{
             Long categorieIdLong = Long.parseLong(id);
@@ -73,6 +78,7 @@ public class CategorieRestController {
     }
 
     @PostMapping("/categorie")
+    @PreAuthorize("hasRole('ADMIN')")
     public Categorie saveCategorie(@RequestBody @Valid Categorie categorie){
         return categorieServices.ajouterCategorie(categorie);
     }
@@ -92,12 +98,14 @@ public class CategorieRestController {
 
 
     @PutMapping("/categorie/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Categorie updateCategorie(@PathVariable(name="id") Long id, @RequestBody Categorie categorie){
         categorie.setId(id);
         return categorieServices.modifierCategorie(categorie);
     }
 
     @PatchMapping("/categorie/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Categorie> updateSupCategorie(@PathVariable(name="id") Long id, @RequestBody CategorieDTO categorieDTO){
         categorieDTO.setId(id);
         Categorie categorie = categorieServices.HideLigneCategorie(categorieDTO);

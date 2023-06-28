@@ -1,7 +1,6 @@
 package producf.kammous.product.DTOs;
 
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 import producf.kammous.product.entities.Categorie;
 
 import java.util.Date;

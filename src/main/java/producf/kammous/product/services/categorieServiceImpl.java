@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import producf.kammous.product.DTOs.CategorieDTO;
 import producf.kammous.product.entities.Categorie;
 import producf.kammous.product.exception.CategorieNotFoundException;
-import producf.kammous.product.exception.IllegalArgumentException;
+
 import producf.kammous.product.mapper.productMapperImpl;
 import producf.kammous.product.repositories.*;
 
@@ -35,7 +35,7 @@ public class categorieServiceImpl implements categorieService{
 
 
     @Override
-    public Categorie getCategorieById(Long id) throws CategorieNotFoundException, IllegalArgumentException {
+    public Categorie getCategorieById(Long id) throws CategorieNotFoundException {
         if(id<=0 || !String.valueOf(id).matches("\\d+")){
             throw new IllegalArgumentException("Ivalid categorie Id"+id);
         }

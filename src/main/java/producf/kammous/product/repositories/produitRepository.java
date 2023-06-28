@@ -10,7 +10,6 @@ import producf.kammous.product.entities.Produit;
 
 @Repository
 public interface produitRepository extends JpaRepository<Produit, Long> {
-
     @Query("select p from Produit p where p.slug like %:slug% and p.supprimer= false order by p.id desc")
     Page<Produit> findProduitByNom(@Param("slug") String keyword, Pageable pageable);
     @Query("select p from Produit p where p.supprimer = false order by p.id desc")

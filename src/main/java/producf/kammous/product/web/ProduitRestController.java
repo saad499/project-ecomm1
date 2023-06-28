@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,15 +28,8 @@ import java.util.List;
 @Slf4j
 public class ProduitRestController {
     private productService productService;
-    //private KafkaListennnersProduit kafkaListennnersProduit;
-
-    /*@PostMapping("addkafkaProd")
-    public ResponseEntity<Produit> ajouterProduit(@RequestBody Produit produit){
-        kafkaListennnersProduit.sendMessage(produit);
-        return ResponseEntity.ok(produit);
-    }*/
-
     @GetMapping("/produit")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Produit>> produit(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
@@ -44,10 +38,12 @@ public class ProduitRestController {
         return ResponseEntity.ok(produitDTOS);
     }
     @GetMapping("/produit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Produit getProduitById(@PathVariable(name="id") Long id){
         return productService.getProduitById(id);
     }
     @PostMapping("/produit")
+    @PreAuthorize("hasRole('ADMIN')")
     public Produit saveProduit(@RequestBody @Valid Produit produit){
         return productService.ajouterProduit(produit);
     }
@@ -66,17 +62,20 @@ public class ProduitRestController {
     }
 
     @PutMapping("/produit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Produit updateProduit(@PathVariable(name="id") Long id, @RequestBody Produit produit){
         produit.setId(id);
         return productService.modifierProduit(produit);
     }
     @PatchMapping("/produit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Produit> updateSupProduit(@PathVariable(name="id") Long id, @RequestBody ProduitDTO produitDTO){
         produitDTO.setId(id);
         Produit produits = productService.HideProduit(produitDTO);
         return ResponseEntity.ok(produits);
     }
     @GetMapping("/produits")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<Produit>> chercherProduit(
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,

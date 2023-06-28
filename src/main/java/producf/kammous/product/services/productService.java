@@ -1,13 +1,14 @@
 package producf.kammous.product.services;
 
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import producf.kammous.product.DTOs.ProduitDTO;
 import producf.kammous.product.entities.Produit;
 import producf.kammous.product.exception.ProductNotFoundException;
 
 import java.io.IOException;
-
+@Service
 public interface productService {
     Page<Produit> listProduit(int page, int size);
     Produit getProduitById(Long id)throws ProductNotFoundException,IllegalArgumentException;

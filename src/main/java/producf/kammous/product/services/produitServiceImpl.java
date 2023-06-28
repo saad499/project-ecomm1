@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import producf.kammous.product.DTOs.ProduitDTO;
 import producf.kammous.product.entities.Categorie;
 import producf.kammous.product.entities.Produit;
-import producf.kammous.product.exception.IllegalArgumentException;
 import producf.kammous.product.exception.ProductNotFoundException;
 import producf.kammous.product.mapper.productMapperImpl;
 import producf.kammous.product.repositories.produitRepository;
@@ -35,7 +34,7 @@ public class produitServiceImpl implements productService{
     }
 
     @Override
-    public Produit getProduitById(Long id) throws ProductNotFoundException, IllegalArgumentException {
+    public Produit getProduitById(Long id) throws ProductNotFoundException {
         if(id<=0 || !String.valueOf(id).matches("\\d+")){
             throw new IllegalArgumentException("Ivalid product Id"+id);
         }

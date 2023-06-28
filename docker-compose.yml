@@ -39,9 +39,8 @@ services:
       - '3306:3306'
     volumes:
       - ./mysql-data:/var/lib/mysql
-
+#network!! comment builder l'image de l'application
   #springboot-app:
-   # image: mouradtals/product:0.0.1-SNAPSHOT
     #depends_on:
      # - mysql
       #- kafka
